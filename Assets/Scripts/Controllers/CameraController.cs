@@ -1,6 +1,8 @@
 namespace Controllers
 {
+    using Unity.Cinemachine;
     using UnityEngine;
+
     public class CameraController : MonoBehaviour
     {
         [Header("Camera Movement")]
@@ -17,15 +19,36 @@ namespace Controllers
         [Header("Edge Scrolling")]
         [SerializeField] private bool _useEdgeScrolling = true;
         [SerializeField] private float _edgeScrollThreshold = 40f;
+        
+        [Header("Zoom Settings")]
+        [SerializeField] private float _zoomSpeed = 2f;
+        [SerializeField] private float _minOrthographicSize = 3f;
+        [SerializeField] private float _maxOrthographicSize = 10f;
+        [SerializeField] private float _zoomSmoothness = 10f;
     
         [Header("References")]
         [SerializeField] private Transform _cameraTarget;
         [SerializeField] private float _cameraRotationY = 45f;
+        [SerializeField] private CinemachineCamera _virtualCamera;
+        
+        private float _targetOrthographicSize;
     
+        private void Awake()
+        {
+            _targetOrthographicSize = _virtualCamera.Lens.OrthographicSize;
+        }
+        
         private void Update()
         {
             HandleKeyboardInput();
-            HandleMouseEdgeScrolling();
+            
+            if (_useEdgeScrolling)
+            {
+                HandleMouseEdgeScrolling();
+            }
+            
+            HandleZoomInput();
+            UpdateZoom();
         }
     
         private void HandleKeyboardInput()
@@ -73,6 +96,24 @@ namespace Controllers
                 MoveCamera(moveDirection);
             }
         }
+        
+        private void HandleZoomInput()
+        {
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            
+            if (scrollInput != 0 && _virtualCamera != null)
+            {
+                _targetOrthographicSize -= scrollInput * _zoomSpeed;
+                _targetOrthographicSize = Mathf.Clamp(_targetOrthographicSize, _minOrthographicSize, _maxOrthographicSize);
+            }
+        }
+        
+        private void UpdateZoom()
+        {
+            float currentSize = _virtualCamera.Lens.OrthographicSize;
+            float newSize = Mathf.Lerp(currentSize, _targetOrthographicSize, Time.deltaTime * _zoomSmoothness);
+            _virtualCamera.Lens.OrthographicSize = newSize;
+        }
     
         private void MoveCamera(Vector3 direction)
         {
@@ -80,7 +121,6 @@ namespace Controllers
                 return;
         
             Vector3 rotatedDirection = Quaternion.Euler(0, _cameraRotationY, 0) * direction.normalized;
-        
             Vector3 moveVector = rotatedDirection * _moveSpeed * Time.deltaTime;
             Vector3 newPosition = _cameraTarget.position + moveVector;
         
