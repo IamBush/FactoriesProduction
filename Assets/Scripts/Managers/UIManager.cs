@@ -2,83 +2,129 @@
 using TMPro;
 using Enums;
 using System.Collections;
+using UnityEngine.UI;
+using Data;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace Managers
 {
     using System;
     public class UIManager : MonoBehaviour
     {
+        [Header("Resource UI Elements")]
         [SerializeField] private TextMeshProUGUI _ironText;
         [SerializeField] private TextMeshProUGUI _goldText;
         [SerializeField] private TextMeshProUGUI _oilText;
         [SerializeField] private TextMeshProUGUI _woodText;
+        [SerializeField] private TextMeshProUGUI _stoneText;
 
+        [SerializeField] private Image _ironIcon;
+        [SerializeField] private Image _goldIcon;
+        [SerializeField] private Image _oilIcon;
+        [SerializeField] private Image _woodIcon;
+        [SerializeField] private Image _stoneIcon;
+
+        [Header("Popup Settings")]
         [SerializeField] private GameObject _popupPanel;
         [SerializeField] private TextMeshProUGUI _popupText;
+        [SerializeField] private Image _popupIcon;
         [SerializeField] private float _popupDuration = 2f;
 
-        private Coroutine _currentPopupCoroutine;
+        private CancellationTokenSource _popupCancellationTokenSource;
         private ProductionType _lastCollectedResourceType;
         private int _lastCollectedAmount;
+        private ResourceDatabase _resourceDatabase;
 
-        private void Awake()
+        public void Initialize(ResourceDatabase resourceDatabase)
         {
-            UpdateResourcesUI(0, 0, 0, 0);
+            _resourceDatabase = resourceDatabase;
+            UpdateResourcesUI(0, 0, 0, 0, 0);
+            InitializeResourceIcons();
         }
 
-        public void UpdateResourcesUI(int iron, int gold, int oil, int wood)
+        private void InitializeResourceIcons()
         {
-            _ironText.SetText($"Iron: {iron}");
-            _goldText.SetText($"Gold: {gold}");
-            _oilText.SetText($"Oil: {oil}");
-            _woodText.SetText($"Wood: {wood}");
+            if (_resourceDatabase == null)
+            {
+                Debug.LogError("ResourceDatabase not initialized in UIManager");
+                return;
+            }
+
+            _ironIcon.sprite = _resourceDatabase.GetResourceIcon(ProductionType.Iron);
+            _goldIcon.sprite = _resourceDatabase.GetResourceIcon(ProductionType.Gold);
+            _oilIcon.sprite = _resourceDatabase.GetResourceIcon(ProductionType.Oil);
+            _woodIcon.sprite = _resourceDatabase.GetResourceIcon(ProductionType.Wood);
+            _stoneIcon.sprite = _resourceDatabase.GetResourceIcon(ProductionType.Stone);
+        }
+
+        private void UpdateResourcesUI(int iron, int gold, int oil, int wood, int stone)
+        {
+            _ironText.SetText($"{iron}");
+            _goldText.SetText($"{gold}");
+            _oilText.SetText($"{oil}");
+            _woodText.SetText($"{wood}");
+            _stoneText.SetText($"{stone}");
+        }
+
+        public void UpdateResourceUI(ProductionType resourceType, int amount)
+        {
+            switch (resourceType)
+            {
+                case ProductionType.Iron:
+                    _ironText.SetText($"{amount}");
+                    break;
+                case ProductionType.Gold:
+                    _goldText.SetText($"{amount}");
+                    break;
+                case ProductionType.Oil:
+                    _oilText.SetText($"{amount}");
+                    break;
+                case ProductionType.Wood:
+                    _woodText.SetText($"{amount}");
+                    break;
+                case ProductionType.Stone:
+                    _stoneText.SetText($"{amount}");
+                    break;
+                default:
+                    Debug.LogWarning($"Unknown resource type: {resourceType}");
+                    break;
+            }
         }
 
         public void ShowResourceCollectedPopup(ProductionType resourceType, int amount)
         {
-            string resourceName = GetResourceName(resourceType);
-            ShowPopup($"Collected: {amount} {resourceName}!");
+            string resourceName = _resourceDatabase.GetResourceName(resourceType);
+            Sprite resourceIcon = _resourceDatabase.GetResourceIcon(resourceType);
+
+            ShowPopup($"Collected: {amount} {resourceName}!", resourceIcon);
 
             _lastCollectedResourceType = resourceType;
             _lastCollectedAmount = amount;
         }
 
-        private string GetResourceName(ProductionType resourceType)
+        private void ShowPopup(string message, Sprite icon)
         {
-            switch (resourceType)
-            {
-                case ProductionType.Iron:
-                    return "Iron";
-                case ProductionType.Gold:
-                    return "Gold";
-                case ProductionType.Oil:
-                    return "Oil";
-                case ProductionType.Wood:
-                    return "Wood";
-                case ProductionType.Stone:
-                    return "Stone";
-                default:
-                    return "Resource";
-            }
-        }
-
-        private void ShowPopup(string message)
-        {
-            if (_currentPopupCoroutine != null)
-            {
-                StopCoroutine(_currentPopupCoroutine);
-            }
+            _popupCancellationTokenSource?.Cancel();
+            _popupCancellationTokenSource = new CancellationTokenSource();
 
             _popupText.text = message;
+            _popupIcon.sprite = icon;
+
             _popupPanel.SetActive(true);
-            _currentPopupCoroutine = StartCoroutine(HidePopupAfterDelay());
+            HidePopupAfterDelayAsync(_popupCancellationTokenSource.Token).Forget();
         }
 
-        private IEnumerator HidePopupAfterDelay()
+        private async UniTaskVoid HidePopupAfterDelayAsync(CancellationToken cancellationToken)
         {
-            yield return new WaitForSeconds(_popupDuration);
+            await UniTask.Delay((int)(_popupDuration * 1000), cancellationToken: cancellationToken);
             _popupPanel.SetActive(false);
-            _currentPopupCoroutine = null;
+        }
+
+        private void OnDestroy()
+        {
+            _popupCancellationTokenSource?.Cancel();
+            _popupCancellationTokenSource?.Dispose();
         }
     }
 }

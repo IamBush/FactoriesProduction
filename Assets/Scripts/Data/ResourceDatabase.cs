@@ -36,19 +36,20 @@ namespace Data
                 InitializeLookup();
             }
 
-            if (_resourceLookup.TryGetValue(resourceType, out ResourceData data))
-            {
-                return data;
-            }
+            return _resourceLookup.GetValueOrDefault(resourceType);
 
-            Debug.LogWarning($"No resource data found for type: {resourceType}");
-            return null;
         }
 
         public Sprite GetResourceIcon(ProductionType resourceType)
         {
             ResourceData data = GetResourceData(resourceType);
             return data?.Icon;
+        }
+        
+        public string GetResourceName(ProductionType resourceType)
+        {
+            ResourceData data = GetResourceData(resourceType);
+            return data?.ResourceName;
         }
 
         public float GetProductionTime(ProductionType resourceType)

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 915b7e314b59b914a9a96ecd456daa6d
+  m_SerializeEntries:
+  - m_GUID: 18297172b2b56654684be72ff6f389f2
+    m_Address: Assets/Sprites/icon_wood.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c5b95e4123829145968ecdbad260ad3
+    m_Address: Assets/Sprites/icon_sound_unmute.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76b7a15b27f39e744b31335f3886e2db
+    m_Address: Assets/Sprites/icon_music_mute.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80e3b5fd564ba8e4995ced07b180a4ca
+    m_Address: Assets/Sprites/icon_gold.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 825e69bbd33141e4393183b938ed486b
+    m_Address: Assets/Sprites/icon_stone.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af03abd8213f229458d37226fb4091c2
+    m_Address: Assets/Sprites/icon_music_unmute.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4de98a6b82fcf9428abd92eaa80c356
+    m_Address: Assets/Sprites/icon_oil.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5643ffc81389fc4292fe8c5665c8fd9
+    m_Address: Assets/Sprites/icon_iron.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f48eb991e1485c24ea16b05307c359d2
+    m_Address: Assets/Sprites/icon_sound_mute.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: ed1b29ef2860ae54695268521b4c1c88, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cbc18c129535c4b458b5d7697f10988f, type: 2}
+    - {fileID: 11400000, guid: 0621185d1d84bde4f916c1397a563b14, type: 2}

@@ -1,12 +1,11 @@
 ﻿namespace Managers
 {
-    using UnityEngine;
     using System.Collections.Generic;
     using Enums;
     using VContainer;
     using System;
-    
-    public class ProductionManager : MonoBehaviour
+
+    public class ProductionManager 
     {
         private Dictionary<ProductionType, int> _resources = new Dictionary<ProductionType, int>();
         private UIManager _uiManager;
@@ -27,22 +26,15 @@
             _resources.TryAdd(type, 0);
             _resources[type] += amount;
 
-            UpdateUI();
+            UpdateUI(type);
 
             _uiManager.ShowResourceCollectedPopup(type, amount);
         }
-
-        private void UpdateUI()
+        
+        private void UpdateUI(ProductionType resourceType)
         {
-            if (_uiManager != null)
-            {
-                int iron = GetResourceAmount(ProductionType.Iron);
-                int gold = GetResourceAmount(ProductionType.Gold);
-                int oil = GetResourceAmount(ProductionType.Oil);
-                int wood = GetResourceAmount(ProductionType.Wood);
-
-                _uiManager.UpdateResourcesUI(iron, gold, oil, wood);
-            }
+            int amount = GetResourceAmount(resourceType);
+            _uiManager.UpdateResourceUI(resourceType, amount);
         }
 
         public int GetResourceAmount(ProductionType type)

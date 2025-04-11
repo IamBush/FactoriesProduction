@@ -1,7 +1,9 @@
 namespace Controllers
 {
+    using Enums;
     using Unity.Cinemachine;
     using UnityEngine;
+    using UnityEngine.EventSystems;
 
     public class CameraController : MonoBehaviour
     {
@@ -32,7 +34,10 @@ namespace Controllers
         [SerializeField] private CinemachineCamera _virtualCamera;
         
         private float _targetOrthographicSize;
-    
+        private bool _moveUpPressed;
+        private bool _moveDownPressed;
+        private bool _moveLeftPressed;
+        private bool _moveRightPressed;
         private void Awake()
         {
             _targetOrthographicSize = _virtualCamera.Lens.OrthographicSize;
@@ -41,6 +46,7 @@ namespace Controllers
         private void Update()
         {
             HandleKeyboardInput();
+            HandleUIButtonInput();
             
             if (_useEdgeScrolling)
             {
@@ -96,7 +102,29 @@ namespace Controllers
                 MoveCamera(moveDirection);
             }
         }
-        
+
+        private void HandleUIButtonInput()
+        {
+            Vector3 moveDirection = Vector3.zero;
+
+            if (_moveUpPressed)
+                moveDirection += Vector3.forward;
+
+            if (_moveDownPressed)
+                moveDirection += Vector3.back;
+
+            if (_moveRightPressed)
+                moveDirection += Vector3.right;
+
+            if (_moveLeftPressed)
+                moveDirection += Vector3.left;
+
+            if (moveDirection != Vector3.zero)
+            {
+                MoveCamera(moveDirection);
+            }
+        }
+
         private void HandleZoomInput()
         {
             float scrollInput = Input.GetAxis("Mouse ScrollWheel");
@@ -128,6 +156,26 @@ namespace Controllers
             newPosition.z = Mathf.Clamp(newPosition.z, _verticalLimits.x, _verticalLimits.y);
         
             _cameraTarget.position = newPosition;
+        }
+        
+        public void OnMoveUpPressed(bool isPressed)
+        {
+            _moveUpPressed = isPressed;
+        }
+        
+        public void OnMoveDownPressed(bool isPressed)
+        {
+            _moveDownPressed = isPressed;
+        }
+        
+        public void OnMoveLeftPressed(bool isPressed)
+        {
+            _moveLeftPressed = isPressed;
+        }
+        
+        public void OnMoveRightPressed(bool isPressed)
+        {
+            _moveRightPressed = isPressed;
         }
     }
 }
